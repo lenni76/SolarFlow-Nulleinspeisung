@@ -1,0 +1,31 @@
+{
+  "title": "SolarFlow-Nulleinspeisung",
+  "config": {
+    "step": {
+      "user": {"title": "SolarFlow-Nulleinspeisung einrichten", "description": "Wähle die drei vorhandenen Home-Assistant-Entitäten aus.", "data": {"grid_power_entity": "Netzleistung", "output_limit_entity": "SolarFlow-Ausgangslimit", "battery_soc_entity": "SolarFlow-Ladestand"}},
+      "reconfigure": {"title": "Entitäten neu zuordnen", "description": "Ändere die verwendeten Quell- und Zielentitäten.", "data": {"grid_power_entity": "Netzleistung", "output_limit_entity": "SolarFlow-Ausgangslimit", "battery_soc_entity": "SolarFlow-Ladestand"}}
+    },
+    "abort": {"already_configured": "SolarFlow-Nulleinspeisung ist bereits eingerichtet.", "reconfigure_successful": "Die Zuordnung wurde aktualisiert."}
+  },
+  "entity": {
+    "number": {
+      "kp": {"name": "Kp"}, "ki": {"name": "Ki"}, "kd": {"name": "Kd"},
+      "target_import": {"name": "Ziel-Netzbezug"}, "reserve_hours": {"name": "Reserve"},
+      "free_soc_threshold": {"name": "Free-SOC-Schwelle"}, "low_soc_output": {"name": "Low-SOC-Fixausgabe"},
+      "low_soc_threshold": {"name": "Low-SOC-Schwelle"}, "min_soc_shutdown": {"name": "Min-SOC-Abschaltung"},
+      "interval": {"name": "Regelintervall"}, "safe_output": {"name": "Sichere Ausgangsleistung"},
+      "unavailable_timeout": {"name": "Ausfallzeit bis Sicherheitswert"}
+    },
+    "time": {"morning_start": {"name": "Morgen Start"}, "morning_end": {"name": "Morgen Ende"}},
+    "switch": {"enabled": {"name": "Regelung"}},
+    "button": {"reset_pid": {"name": "PID-Zustand zurücksetzen"}},
+    "binary_sensor": {"healthy": {"name": "Regelungsproblem"}, "morning_active": {"name": "Morgenmodus aktiv"}},
+    "sensor": {
+      "mode": {"name": "Regelmodus", "state": {"starting": "Startet", "disabled": "Ausgeschaltet", "min_soc_shutdown": "Min-SOC-Abschaltung", "morning": "Morgenregelung", "low_soc": "Low-SOC-Fixleistung", "soc_limited_pid": "SOC-begrenzte PID-Regelung", "free_pid": "Freie PID-Regelung", "invalid_input": "Ungültige Eingangsdaten", "write_error": "Schreibfehler"}},
+      "calculated_output": {"name": "Berechnete Ausgangsleistung"}, "pid_error": {"name": "PID-Fehler"},
+      "pid_integral": {"name": "PID-Integral"}, "pid_derivative": {"name": "PID-Ableitung"},
+      "feed_in_limit": {"name": "Einspeise-Limit"}, "sustainable_output": {"name": "Nachhaltige Akkuleistung"},
+      "linear_soc_output": {"name": "SOC-begrenzte Leistung"}
+    }
+  }
+}
