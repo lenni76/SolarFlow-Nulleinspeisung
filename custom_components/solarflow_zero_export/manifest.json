@@ -1,12 +1,14 @@
 {
   "domain": "solarflow_zero_export",
   "name": "SolarFlow-Nulleinspeisung",
-  "codeowners": ["@lenni76"],
+  "codeowners": [
+    "@lenni76"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/lenni76/ha-solarflow-nulleinspeisung",
   "integration_type": "service",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/lenni76/ha-solarflow-nulleinspeisung/issues",
   "requirements": [],
-  "version": "1.0.0"
+  "version": "1.0.2"
 }
