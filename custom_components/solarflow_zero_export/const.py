@@ -1,4 +1,5 @@
 """Constants for SolarFlow Nulleinspeisung."""
+
 from __future__ import annotations
 
 from typing import Final
@@ -7,11 +8,18 @@ DOMAIN: Final = "solarflow_zero_export"
 NAME: Final = "SolarFlow-Nulleinspeisung"
 MANUFACTURER: Final = "lenni76"
 
-PLATFORMS: Final = ["binary_sensor", "button", "number", "sensor", "switch", "time"]
+PLATFORMS: Final = ["binary_sensor", "button", "number", "sensor", "select", "switch", "time"]
 
 CONF_GRID_POWER: Final = "grid_power_entity"
 CONF_OUTPUT_LIMIT: Final = "output_limit_entity"
 CONF_BATTERY_SOC: Final = "battery_soc_entity"
+CONF_OUTPUT_POWER: Final = "output_power_entity"
+
+CONF_OUTPUT_TARGET_ID: Final = "output_limit_registry_id"
+OPT_CONTROL_STRATEGY: Final = "control_strategy"
+STRATEGY_CORRECTED: Final = "corrected"
+STRATEGY_COMPARISON: Final = "comparison"
+CONTROL_STRATEGIES: Final = (STRATEGY_CORRECTED, STRATEGY_COMPARISON)
 
 OPT_KP: Final = "kp"
 OPT_KI: Final = "ki"
@@ -30,6 +38,7 @@ OPT_SAFE_OUTPUT: Final = "safe_output"
 OPT_UNAVAILABLE_TIMEOUT: Final = "unavailable_timeout"
 
 DEFAULTS: Final = {
+    OPT_CONTROL_STRATEGY: STRATEGY_CORRECTED,
     OPT_KP: 0.6,
     OPT_KI: 0.04,
     OPT_KD: 0.15,
@@ -54,11 +63,7 @@ INTEGRAL_MIN: Final = -1500.0
 INTEGRAL_MAX: Final = 1500.0
 ERROR_MIN: Final = -2000.0
 ERROR_MAX: Final = 2000.0
-FEED_IN_BUFFER: Final = 750.0
 BATTERY_CAPACITY_WH: Final = 2700.0
-DEAD_ZONE_MIN: Final = -15.0
-DEAD_ZONE_MAX: Final = 35.0
-MORNING_TARGET_IMPORT: Final = 20.0
 
 MODE_DISABLED: Final = "disabled"
 MODE_MIN_SOC: Final = "min_soc_shutdown"

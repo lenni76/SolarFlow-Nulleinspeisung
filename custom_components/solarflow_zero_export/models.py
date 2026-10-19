@@ -1,11 +1,14 @@
 """Data models for SolarFlow Nulleinspeisung."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypeAlias
+from datetime import datetime
+from typing import TYPE_CHECKING
+
+from homeassistant.config_entries import ConfigEntry
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from .controller import SolarFlowZeroExportController
 
 
@@ -13,6 +16,17 @@ if TYPE_CHECKING:
 class ControllerSnapshot:
     """Calculated controller values exposed to entities and diagnostics."""
 
+    steering_logic: str = "starting"
+    limiting_reason: str = "starting"
+    actual_output: float | None = None
+    corrected_output: float | None = None
+    legacy_output: float | None = None
+    comparison_difference: float | None = None
+    last_confirmed_output: float | None = None
+    last_confirmed_at: datetime | None = None
+    last_write_error: str | None = None
+    last_write_error_at: datetime | None = None
+    failed_write_count: int = 0
     mode: str = "starting"
     available: bool = False
     grid_power: float | None = None
@@ -34,4 +48,4 @@ class ControllerSnapshot:
     skipped_write_count: int = 0
 
 
-SolarFlowZeroExportConfigEntry: TypeAlias = "ConfigEntry[SolarFlowZeroExportController]"
+type SolarFlowZeroExportConfigEntry = ConfigEntry["SolarFlowZeroExportController"]

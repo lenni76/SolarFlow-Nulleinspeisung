@@ -1,4 +1,5 @@
 """Base entity for SolarFlow Nulleinspeisung."""
+
 from __future__ import annotations
 
 from homeassistant.helpers.entity import DeviceInfo, Entity

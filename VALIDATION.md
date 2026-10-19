@@ -1,33 +1,11 @@
-# Prüfbericht – SolarFlow-Nulleinspeisung 1.0.0
+# Validierung des Release-Kandidaten 1.0.1
 
-## Grundlage
+Stand: 19. Oktober 2026. Lokal geprüft, nicht am produktiven Home Assistant oder physischen Gerät installiert. Die Veröffentlichung ist durch die GitHub-Prüfungen abgesichert.
 
-Implementiert gegen die am 23. Juli 2026 veröffentlichte offizielle Home-Assistant-Entwicklerdokumentation zu Config Flows, Reconfigure Flows, Config Entries, Entity-Plattformen, `ConfigEntry.runtime_data`, Event-Intervallen, Manifesten, Lokalisierung und Diagnosen.
+Dieser Entwurf ergänzt die vier Korrekturen aus 1.0.1.dev0 um die drei ausdrücklich beauftragten Funktionen: Vergleichsmodus, exklusive Schreibziel-Zuordnung und Statusanzeigen. Die vorherigen Nachweise bleiben lokal erhalten. Installationsbezogene Rohprotokolle werden nicht veröffentlicht.
 
-## Durchgeführte Prüfungen
+127 Tests bestanden (37 Rechentests und 90 echte HA-Tests), einschließlich des Abgleichs von 720 Original-Referenzfällen. Zehn ausgewählte Abläufe mit API 1.2.0 ebenfalls bestanden. Hauptreferenz ist die unveränderte API 1.2.1. Zeilenabdeckung: 98,25 %. Alle 23 Hassfest-Standardvalidatoren bestanden (0 ungültige Integrationen); Ruff-Code- und Formatprüfung bestanden. Bestehende Entitäts-IDs bleiben erhalten. Reproduzierbare Tests liegen in `tests` und `ha_tests`, Abhängigkeiten in `ha_tests/requirements.txt`. Die offizielle Hassfest-Prüfung wird mit dem unveränderten Quellstand aus Core 2026.10.2 ausgeführt.
 
-- vollständige Python-Syntaxprüfung aller Module mit `compileall`
-- AST-Parsing aller Python-Dateien
-- JSON-Parsing von Manifest, HACS-Metadaten, Strings und Übersetzungen
-- Prüfung der Repository- und Custom-Component-Struktur
-- Prüfung, dass keine direkte SolarFlow- oder Shelly-Bibliothek importiert wird
-- Prüfung, dass Schreibzugriffe ausschließlich über `number.set_value` erfolgen
-- Prüfung der persistenten Speicherung von Integral und letztem Fehler
-- Prüfung der Serialisierbarkeit veränderbarer Zeitwerte als ISO-Zeichenketten
-- Rechentests für:
-  - Min-SOC-Abschaltung
-  - Morgenmodus und Ziel-Netzbezug
-  - Low-SOC-Fixleistung
-  - PID-Totzone
-  - Integral-Anti-Windup
-  - Zeitfenster über Mitternacht
-- Prüfung der originalen Standardwerte des IP-Symcon-Skripts
-- Prüfung der Prioritätsreihenfolge des IP-Symcon-Skripts
+Die Tests führen beide Integrationen und HA-Dienste tatsächlich aus. Physisches Gerät, Leistungsverläufe und Regleruhr sind simuliert. Tests mit dem echten Gerät, Proxmox und HA OS wurden nicht durchgeführt. Der GitHub-Workflow führt zusätzlich den HACS-Validator sowie Hassfest aus; ein Release wird nur nach erfolgreichen Prüfungen erstellt.
 
-## Ergebnis
-
-Alle oben genannten statischen Prüfungen und Rechentests bestanden.
-
-## Nicht in dieser Umgebung ausführbar
-
-Ein vollständiger Lauf in einer realen Home-Assistant-2026.07-Instanz sowie Hassfest-, HACS-Action- und Home-Assistant-Core-Pytest-Läufe waren in der bereitgestellten Offline-Umgebung nicht möglich. Diese Prüfungen sollten nach dem Push über GitHub Actions beziehungsweise in einer Home-Assistant-Testinstanz ergänzt werden.
+Die feste Kapazitätsannahme von 2.700 Wh und die Speicherung des PID-Zustands je gültigem Zyklus sind unverändert. Die Schreibzielsperre erfasst keine fremden Automationen oder die Zendure-App. Der ausdrücklich ausgewählte Vergleichsmodus lässt die bisherige Berechnung mit ihren bekannten Schwächen steuern; die korrigierte Regelung ist die Voreinstellung. Ein Messwertvergleich ist kein simulierter zweiter geschlossener Regelkreis und keine Garantie physischer Nulleinspeisung.

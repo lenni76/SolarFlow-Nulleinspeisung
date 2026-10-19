@@ -1,4 +1,5 @@
 """Number entities for SolarFlow Nulleinspeisung."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -9,23 +10,37 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import (
-    DEFAULTS, OPT_FREE_SOC_THRESHOLD, OPT_INTERVAL, OPT_KD, OPT_KI, OPT_KP,
-    OPT_LOW_SOC_OUTPUT, OPT_LOW_SOC_THRESHOLD, OPT_MIN_SOC_SHUTDOWN,
-    OPT_RESERVE_HOURS, OPT_SAFE_OUTPUT, OPT_TARGET_IMPORT, OPT_UNAVAILABLE_TIMEOUT,
+    OPT_FREE_SOC_THRESHOLD,
+    OPT_INTERVAL,
+    OPT_KD,
+    OPT_KI,
+    OPT_KP,
+    OPT_LOW_SOC_OUTPUT,
+    OPT_LOW_SOC_THRESHOLD,
+    OPT_MIN_SOC_SHUTDOWN,
+    OPT_RESERVE_HOURS,
+    OPT_SAFE_OUTPUT,
+    OPT_TARGET_IMPORT,
+    OPT_UNAVAILABLE_TIMEOUT,
 )
 from .entity import SolarFlowZeroExportEntity
 from .models import SolarFlowZeroExportConfigEntry
 
+
 @dataclass(frozen=True, kw_only=True)
 class Description:
-    key: str; minimum: float; maximum: float; step: float
+    key: str
+    minimum: float
+    maximum: float
+    step: float
     unit: str | None = None
+
 
 DESCRIPTIONS = (
     Description(key=OPT_KP, minimum=0, maximum=5, step=0.01),
     Description(key=OPT_KI, minimum=0, maximum=2, step=0.01),
     Description(key=OPT_KD, minimum=0, maximum=5, step=0.01),
-    Description(key=OPT_TARGET_IMPORT, minimum=-500, maximum=1000, step=1, unit=UnitOfPower.WATT),
+    Description(key=OPT_TARGET_IMPORT, minimum=0, maximum=1000, step=1, unit=UnitOfPower.WATT),
     Description(key=OPT_RESERVE_HOURS, minimum=0, maximum=24, step=0.1, unit=UnitOfTime.HOURS),
     Description(key=OPT_FREE_SOC_THRESHOLD, minimum=1, maximum=100, step=1, unit=PERCENTAGE),
     Description(key=OPT_LOW_SOC_OUTPUT, minimum=0, maximum=1000, step=20, unit=UnitOfPower.WATT),
@@ -33,11 +48,19 @@ DESCRIPTIONS = (
     Description(key=OPT_MIN_SOC_SHUTDOWN, minimum=0, maximum=50, step=1, unit=PERCENTAGE),
     Description(key=OPT_INTERVAL, minimum=5, maximum=300, step=1, unit=UnitOfTime.SECONDS),
     Description(key=OPT_SAFE_OUTPUT, minimum=0, maximum=1000, step=20, unit=UnitOfPower.WATT),
-    Description(key=OPT_UNAVAILABLE_TIMEOUT, minimum=0, maximum=3600, step=5, unit=UnitOfTime.SECONDS),
+    Description(
+        key=OPT_UNAVAILABLE_TIMEOUT, minimum=0, maximum=3600, step=5, unit=UnitOfTime.SECONDS
+    ),
 )
 
-async def async_setup_entry(hass: HomeAssistant, entry: SolarFlowZeroExportConfigEntry, async_add_entities: AddConfigEntryEntitiesCallback) -> None:
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: SolarFlowZeroExportConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
     async_add_entities(SolarFlowOptionNumber(entry.runtime_data, desc) for desc in DESCRIPTIONS)
+
 
 class SolarFlowOptionNumber(SolarFlowZeroExportEntity, NumberEntity):
     _attr_mode = NumberMode.BOX

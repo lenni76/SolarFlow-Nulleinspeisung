@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+.coverage
+Pruefnachweise/
+.test-api/
+dist/
+test-results.xml

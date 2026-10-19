@@ -1,0 +1,106 @@
+name: Validate and release
+
+on:
+  push:
+    branches: [main, 'release/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.14'
+      - run: python -m pip install ruff==0.17.1
+      - run: python -m ruff check custom_components tests ha_tests scripts
+      - run: python -m ruff format --check custom_components tests ha_tests scripts
+
+  homeassistant:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SOLARFLOW_TEST_API_ROOT: ${{ github.workspace }}/.test-api/1.2.1
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: lenni76/SolarFlow2400ProAPI
+          ref: 31ae953147f45c63ed0e802e55af4aa712d9975e
+          path: .test-api/1.2.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r ha_tests/requirements.txt
+      - run: python -m pytest -q tests ha_tests --timeout=60 --junitxml=test-results.xml
+
+  legacy-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SOLARFLOW_TEST_API_ROOT: ${{ github.workspace }}/.test-api/1.2.0
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: lenni76/SolarFlow2400ProAPI
+          ref: 59b8ee3aae43a28be15a12a5d813d4975a3d7c42
+          path: .test-api/1.2.0
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r ha_tests/requirements.txt
+      - name: Selected compatibility checks with API 1.2.0
+        run: >-
+          python -m pytest -q ha_tests --timeout=60
+          -k 'ignored_command_now_reaches_controller_as_error or safety_zero_is_retried_until_confirmed or missing_selected_measurement_is_not_replaced_by_limit or reconfigure_reloads_exactly_once_without_deprecated_listener or existing_ui_entities_update_options_without_reloading or duplicate_entry_is_blocked_including_safety_and_direct_write or duplicate_user_flow_rejected_even_with_different_sources or duplicate_reconfigure_rejected_without_reload_or_data_change or legacy_comparison_also_requires_acknowledgement or acknowledged_safety_remains_visible_without_more_writes'
+
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: hacs/action@main
+        with:
+          category: integration
+          # Existing custom HACS repository; central brands/topics are optional here.
+          ignore: brands topics
+
+  preserve-baseline:
+    if: github.event_name == 'push' && github.repository == 'lenni76/SolarFlow-Nulleinspeisung'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Preserve the unchanged 1.0.0 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_release.py --baseline-only
+
+  release:
+    needs: [static, homeassistant, legacy-api, hassfest, hacs, preserve-baseline]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'lenni76/SolarFlow-Nulleinspeisung'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Publish exactly the checked commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_release.py

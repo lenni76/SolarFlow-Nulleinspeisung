@@ -4,26 +4,31 @@
     "step": {
       "user": {
         "title": "Set up SolarFlow Zero Export",
-        "description": "Select the three existing Home Assistant entities.",
+        "description": "Select grid power, output limit, SOC and measured SolarFlow delivery to the house. Grid import must be positive.",
         "data": {
           "grid_power_entity": "Netzleistung",
           "output_limit_entity": "SolarFlow-Ausgangslimit",
-          "battery_soc_entity": "SolarFlow-Ladestand"
+          "battery_soc_entity": "SolarFlow-Ladestand",
+          "output_power_entity": "Measured SolarFlow power delivered to the house"
         }
       },
       "reconfigure": {
         "title": "Reassign entities",
-        "description": "Change the source and target entities used by the controller.",
+        "description": "Select grid power, output limit, SOC and measured SolarFlow delivery to the house. Grid import must be positive.",
         "data": {
           "grid_power_entity": "Netzleistung",
           "output_limit_entity": "SolarFlow-Ausgangslimit",
-          "battery_soc_entity": "SolarFlow-Ladestand"
+          "battery_soc_entity": "SolarFlow-Ladestand",
+          "output_power_entity": "Measured SolarFlow power delivered to the house"
         }
       }
     },
     "abort": {
       "already_configured": "SolarFlow Zero Export is already configured.",
       "reconfigure_successful": "The entity assignment was updated."
+    },
+    "error": {
+      "output_already_controlled": "This output limit is already assigned to another SolarFlow controller."
     }
   },
   "entity": {
@@ -47,7 +52,7 @@
         "name": "Free-SOC-Schwelle"
       },
       "low_soc_output": {
-        "name": "Low-SOC-Fixausgabe"
+        "name": "Low-SOC output ceiling"
       },
       "low_soc_threshold": {
         "name": "Low-SOC-Schwelle"
@@ -99,11 +104,13 @@
           "disabled": "Ausgeschaltet",
           "min_soc_shutdown": "Min-SOC-Abschaltung",
           "morning": "Morgenregelung",
-          "low_soc": "Low-SOC-Fixleistung",
+          "low_soc": "Low-SOC output limit",
           "soc_limited_pid": "SOC-begrenzte PID-Regelung",
           "free_pid": "Freie PID-Regelung",
           "invalid_input": "Ungültige Eingangsdaten",
-          "write_error": "Schreibfehler"
+          "write_error": "Schreibfehler",
+          "target_conflict": "Output owned by another controller",
+          "stopping": "Stopping"
         }
       },
       "calculated_output": {
@@ -119,13 +126,94 @@
         "name": "PID-Ableitung"
       },
       "feed_in_limit": {
-        "name": "Einspeise-Limit"
+        "name": "Output ceiling from measured grid demand"
       },
       "sustainable_output": {
         "name": "Nachhaltige Akkuleistung"
       },
       "linear_soc_output": {
         "name": "SOC-begrenzte Leistung"
+      },
+      "actual_output": {
+        "name": "Actual delivery to house"
+      },
+      "reported_output_limit": {
+        "name": "Reported output limit"
+      },
+      "corrected_output": {
+        "name": "Corrected calculation output"
+      },
+      "legacy_output": {
+        "name": "Legacy calculation output"
+      },
+      "comparison_difference": {
+        "name": "Difference corrected minus legacy"
+      },
+      "last_confirmed_output": {
+        "name": "Last acknowledged command"
+      },
+      "last_confirmed_at": {
+        "name": "Last acknowledged command time"
+      },
+      "last_write_error": {
+        "name": "Last write error",
+        "state": {
+          "none": "No error since start"
+        }
+      },
+      "last_write_error_at": {
+        "name": "Last write error time"
+      },
+      "write_count": {
+        "name": "Acknowledged commands since start"
+      },
+      "failed_write_count": {
+        "name": "Failed commands since start"
+      },
+      "skipped_write_count": {
+        "name": "Unchanged outputs since start"
+      },
+      "steering_logic": {
+        "name": "Active steering logic",
+        "state": {
+          "starting": "Starting",
+          "corrected": "Corrected calculation controls",
+          "legacy": "Legacy calculation controls",
+          "disabled": "Disabled",
+          "invalid_input": "Invalid input: normal control paused",
+          "target_conflict": "Blocked: output owned",
+          "stopping": "Stopping",
+          "safety": "Safety output"
+        }
+      },
+      "limiting_reason": {
+        "name": "Limiting reason",
+        "state": {
+          "starting": "Starting",
+          "pid": "PID calculation",
+          "target_import": "Target grid import",
+          "low_soc": "Low SOC output ceiling",
+          "soc_reserve": "SOC and reserve ceiling",
+          "min_soc": "Minimum SOC shutdown",
+          "device_max": "Device maximum",
+          "device_step": "Device step",
+          "safety_output": "Safety output after invalid input",
+          "invalid_input": "Invalid input",
+          "write_error": "Command not acknowledged",
+          "legacy_rule": "Legacy arithmetic in comparison mode",
+          "target_conflict": "Output owned by another controller",
+          "disabled": "Disabled",
+          "stopping": "Stopping"
+        }
+      }
+    },
+    "select": {
+      "control_strategy": {
+        "name": "Control strategy",
+        "state": {
+          "corrected": "Corrected control",
+          "comparison": "Comparison – legacy logic controls"
+        }
       }
     }
   }
